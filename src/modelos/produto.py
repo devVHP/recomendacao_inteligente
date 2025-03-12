@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Disc, List, Optional, Set
 import numpy as np
 from collections import defaultdict
+from collections import deque
 
 class Produto:
     def __init__(self,
@@ -37,3 +38,23 @@ class Produto:
                                 nota: float,
                                 comentario: str = "",
                                 metadata: Dict = None) -> None:
+
+        def buscar_produtos_relacionados(catalogo,produto_inicial,max_produtos=5):
+            # Inicialização
+            fila = deque([produto_inicial])
+            visitados = {produto_inicial}
+            relacionados = []
+
+            # Busca
+            while fila and len(relacionados) < max_produtos:
+                atual = fila.popleft()
+
+                if atual != produto_inicial:
+                    relacionados.append(atual)
+
+                produto = catalogo[atual]
+                for similiar_id in produto.produtos_similares:
+                    if similiar_id not in visitados:
+                        fila.append(similiar_id)
+                        visitados.add(similiar_id)
+            return relacionados
